@@ -1,5 +1,19 @@
 # qq-codex-bridge
 
+## 本仓库的改动说明
+
+本仓库增加了 Windows 支持。
+
+本机的 Windows 常驻桥接由工作区中的 `work/qq-bridge-service` 管理，启动脚本与运行数据独立于本仓库。克隆本仓库后仍需单独配置这一层。
+
+- Windows 计划任务 `Codex QQ Bridge` 登录后自动启动。启动脚本直接运行本机 Codex App Server，跳过原版入口的桌面 CDP 检查。
+- QQ 私聊通过白名单授权。首次聊天前先用 `/threads` 和 `/tu <序号>` 绑定已有对话，或用 `/tn <标题>` 新建对话。
+- 重新绑定时会清除旧错误。桌面端正在占用线程时，桥接会报告占用并保留绑定。QQ 回合结束后，桥接主动退订，线程空闲约两秒后可交回桌面。
+
+原项目由 [983033995/qq-codex-bridge](https://github.com/983033995/qq-codex-bridge) 维护。
+
+---
+
 ![CI](https://github.com/983033995/qq-codex-bridge/actions/workflows/ci.yml/badge.svg)
 [![License](https://img.shields.io/github/license/983033995/qq-codex-bridge)](./LICENSE)
 [![Node](https://img.shields.io/badge/node-%3E%3D20-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
@@ -240,7 +254,7 @@ bridge 同时支持 **Codex Desktop** 和 **ChatGPT Desktop** 作为 AI 对话�
 ## 开发者源码启动
 
 ```bash
-git clone https://github.com/983033995/qq-codex-bridge.git
+git clone git@github.com:feightwywx/qq-codex-bridge.git
 cd qq-codex-bridge
 pnpm install
 cp .env.example .env
