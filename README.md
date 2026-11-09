@@ -2,13 +2,34 @@
 
 ## 本仓库的改动说明
 
-本仓库增加了 Windows 支持。
+本 fork 提供 [Windows 启动脚本](./scripts/windows/start.ps1)。它直接运行本机 Codex App Server，跳过桌面 CDP 检查。Windows 入口支持一个 QQ 官方机器人，通过一次性口令授权私聊账号，每个账号独立保存绑定。
 
-本机的 Windows 常驻桥接由工作区中的 `work/qq-bridge-service` 管理，启动脚本与运行数据独立于本仓库。克隆本仓库后仍需单独配置这一层。
+- 首次聊天前，用 `/threads` 和 `/tu <序号>` 绑定已有对话，或用 `/tn <标题>` 新建对话。
+- 重新绑定会清除旧错误。桌面端占用线程时，桥接会报告原因并保留绑定。QQ 回合结束后，桥接主动退订，线程空闲约两秒后释放。
 
-- Windows 计划任务 `Codex QQ Bridge` 登录后自动启动。启动脚本直接运行本机 Codex App Server，跳过原版入口的桌面 CDP 检查。
-- QQ 私聊通过白名单授权。首次聊天前先用 `/threads` 和 `/tu <序号>` 绑定已有对话，或用 `/tn <标题>` 新建对话。
-- 重新绑定时会清除旧错误。桌面端正在占用线程时，桥接会报告占用并保留绑定。QQ 回合结束后，桥接主动退订，线程空闲约两秒后可交回桌面。
+### Windows 快速开始
+
+安装 Node.js 22、pnpm 10 和已登录的 Codex Desktop 或 Codex CLI。在 QQ 开放平台为机器人选择 WebSocket，并允许你的账号私聊机器人。然后在仓库根目录运行：
+
+```powershell
+pnpm install --frozen-lockfile
+pnpm build
+Copy-Item .env.example .env
+```
+
+已有 `.env` 时保留现有文件。在其中填写 `QQBOT_APP_ID` 和 `QQBOT_CLIENT_SECRET`。用以下命令启动桥接：
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\windows\start.ps1
+```
+
+在另一窗口运行以下命令。用要授权的 QQ 账号私聊机器人，发送脚本输出的完整口令。口令五分钟内有效，成功配对后失效。白名单和对话绑定保存在 `runtime/windows/`。
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\windows\start.ps1 -Pair
+```
+
+如需常驻，可在 Windows 任务计划程序中配置当前用户登录时运行上述启动命令，并将脚本路径换成绝对路径。
 
 原项目由 [983033995/qq-codex-bridge](https://github.com/983033995/qq-codex-bridge) 维护。
 
@@ -351,7 +372,7 @@ pnpm dev
 
 ## 环境要求
 
-- macOS
+- 原版入口使用 macOS。Windows 使用本文顶部的专用入口。
 - Node.js 20+
 - 已安装 Codex Desktop（使用 Codex 源时）
 - 已安装 ChatGPT Desktop（使用 ChatGPT 源时）
